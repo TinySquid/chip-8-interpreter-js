@@ -1,0 +1,15 @@
+{
+  "name": "chip-8-interpreter",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build",
+    "watch-roms": "cpx \"roms/**/*.ch8\" dev-dist/roms -w",
+    "copy-roms": "cpx \"roms/**/*.ch8\" dist/roms"
+  },
+  "devDependencies": {
+    "cpx2": "^7.0.1",
+    "parcel": "^2.12.0"
+  },
+  "license": "MIT"
+}
