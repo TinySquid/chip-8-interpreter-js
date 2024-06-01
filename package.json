@@ -8,8 +8,12 @@
     "copy-roms": "cpx \"roms/**/*.ch8\" dist/roms"
   },
   "devDependencies": {
+    "buffer": "^5.5.0||^6.0.0",
     "cpx2": "^7.0.1",
     "parcel": "^2.12.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "hexy": "^0.3.5"
+  }
 }
