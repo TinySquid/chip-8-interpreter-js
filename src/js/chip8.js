@@ -17,7 +17,9 @@ export default class Chip8 {
     this.keypad = keypad;
     this.speaker = speaker;
 
-    this.memory = new Array(options["memorySize"]).fill(0);
+    this.options = options;
+
+    this.memory = new Array(this.options["memorySize"]).fill(0);
     this.stack = [];
 
     this.registers = {
@@ -38,19 +40,63 @@ export default class Chip8 {
       0xe: 0,
       0xf: 0,
       I: 0,
-      PC: 0,
+      PC: this.options["programStartAddress"],
     };
 
     this.isRunning = false;
   }
 
-  start() {}
+  start() {
+    this.isRunning = true;
 
-  stop() {}
+    this.renderer.start();
+  }
 
-  reset() {}
+  stop() {
+    this.isRunning = false;
 
-  step() {}
+    this.renderer.stop();
+  }
+
+  reset() {
+    this.stop();
+
+    this.memory.fill(0);
+    this.stack = [];
+
+    for (let key of Object.keys(this.registers)) {
+      this.registers[key] = 0;
+    }
+
+    this.registers["PC"] = this.options["programStartAddress"];
+
+    this.renderer.stop();
+    this.renderer.clear();
+  }
+
+  step() {
+    /*
+      memory is 1 byte wide so the instruction needs to
+      combine two single byte reads.
+      ex a22a instruction:
+      a2 ->       1010 0010 
+      2a ->       0010 1010
+      a2 Lsh 8 -> 1010 0010 0000 0000
+      OR 2a ->    1010 0010 0010 1010
+    */
+    // FETCH
+    const instruction =
+      (this.memory[this.registers["PC"]] << 8) |
+      this.memory[this.registers["PC" + 1]];
+
+    this.registers["PC"] += 2;
+
+    // needs more thought because a 4095 rollover would set this to 96 instead of 0
+    this.registers["PC"] &= 0x0fff;
+
+    // DECODE / EXEC
+    // magic
+  }
 
   /**
    *
@@ -69,7 +115,9 @@ export default class Chip8 {
       00000070: f300 e300 43e0 00e0 0080 0080 0080 0080 
       00000080: 00e0 00e0 000a  
     */
-    console.log(hexy(Buffer.from(buffer), { annotate: "none", format: "fours" }));
+    console.log(
+      hexy(Buffer.from(buffer), { annotate: "none", format: "fours" })
+    );
 
     for (let i = 0; i < buffer.length; i++) {
       this.memory[address + i] = buffer[i];

@@ -24,8 +24,32 @@ const chip8 = new Chip8(renderer, keypad, speaker, options);
 
 chip8.loadFont(defaultFontLocation, fontData);
 
-const btn = document.getElementById("b");
-btn.addEventListener("click", async () => {
+const startBtn = document.getElementById("start-btn");
+startBtn.addEventListener("click", () => {
+  if (!chip8.isRunning) {
+    chip8.start();
+  }
+});
+
+const stopBtn = document.getElementById("stop-btn");
+stopBtn.addEventListener("click", () => {
+  if (chip8.isRunning) {
+    chip8.stop();
+  }
+});
+
+const stepBtn = document.getElementById("step-btn");
+stepBtn.addEventListener("click", () => {
+  if (!chip8.isRunning) {
+    chip8.step();
+  }
+});
+
+const loadBtn = document.getElementById("load-btn");
+loadBtn.addEventListener("click", async () => {
+  chip8.reset();
+
   const buffer = await readROM("ibm");
-  chip8.loadROM(options["programStartAddress"], buffer);
-})
+
+  chip8.loadROM(options.programStartAddress, buffer);
+});
