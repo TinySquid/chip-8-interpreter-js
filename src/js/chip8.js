@@ -75,6 +75,8 @@ export default class Chip8 {
   }
 
   step() {
+    // this.printRegisters();
+
     /*
       memory is 1 byte wide so the instruction needs to
       combine two single byte reads.
@@ -87,15 +89,188 @@ export default class Chip8 {
     // FETCH
     const instruction =
       (this.memory[this.registers["PC"]] << 8) |
-      this.memory[this.registers["PC" + 1]];
+      this.memory[this.registers["PC"] + 1];
 
     this.registers["PC"] += 2;
 
     // needs more thought because a 4095 rollover would set this to 96 instead of 0
-    this.registers["PC"] &= 0x0fff;
+    // this.registers["PC"] &= 0x0fff;
 
-    // DECODE / EXEC
-    // magic
+    // DECODE
+    /*
+      ANNN
+        - stores immediate 12-bit value into I register
+        A - opcode 
+        NNN - operand
+
+      immediate can be 1, 2, or 3 nibbles
+      instruction can have specifiers for operating on registers X / and or Y
+      1st, 2nd, and last nibble can be opcodes
+
+      just decode everything in one place and use where needed
+    */
+    const opcode = [
+      (instruction & 0xf000) >> 12,
+      instruction & 0x00ff,
+      instruction & 0x000f,
+    ];
+
+    // console.log(
+    //   instruction.toString(16),
+    //   opcode,
+    //   this.memory[this.registers["PC"] - 1].toString(16)
+    // );
+
+    const vX = (instruction & 0x0f00) >> 8;
+    const vY = (instruction & 0x00f0) >> 4;
+
+    let iN = instruction & 0x000f;
+    let iNN = instruction & 0x00ff;
+    let iNNN = instruction & 0x0fff;
+
+    // EXECUTE
+    switch (opcode[0]) {
+      case 0x0:
+        switch (opcode[1]) {
+          // 00E0
+          case 0xe0:
+            this.renderer.clear();
+            break;
+
+          // 00EE
+          case 0xee:
+            this.registers["PC"] = this.stack.pop();
+            break;
+
+          default:
+            throw new Error(
+              `invalid instruction: 0x${instruction.toString(16)}`
+            );
+        }
+        break;
+
+      // 1NNN
+      case 0x1:
+        this.registers["PC"] = iNNN;
+        break;
+
+      // 2NNN
+      case 0x2:
+        this.stack.push(this.registers["PC"]);
+
+        this.registers["PC"] = iNNN;
+        break;
+
+      // 3XNN
+      case 0x3:
+        if (this.registers[vX] === iNN) this.registers["PC"] += 2;
+        break;
+
+      // 4XNN
+      case 0x4:
+        if (this.registers[vX] !== iNN) this.registers["PC"] += 2;
+        break;
+
+      // 5XY0
+      case 0x5:
+        if (this.registers[vX] === this.registers[vY])
+          this.registers["PC"] += 2;
+        break;
+
+      // 6XNN
+      case 0x6:
+        this.registers[vX] = iNN;
+        break;
+
+      // 7XNN
+      case 0x7:
+        this.registers[vX] += iNN;
+        break;
+
+      // 8--- instructions
+      case 0x8:
+        break;
+
+      // 9XY0
+      case 0x9:
+        if (this.registers[vX] !== this.registers[vY])
+          this.registers["PC"] += 2;
+        break;
+
+      // ANNN
+      case 0xa:
+        this.registers["I"] = iNNN;
+        break;
+
+      // BNNN
+      case 0xb:
+        this.registers["PC"] = iNNN + this.registers[0x0];
+        break;
+
+      // CXNN
+      case 0xc:
+        const r = Math.floor(Math.random() * 0xff);
+
+        this.registers[vX] = r & iNN;
+        break;
+
+      // DXYN (drawing)
+      case 0xd:
+        break;
+
+      case 0xe:
+        switch (opcode[1]) {
+          // EX9E
+          case 0x9e:
+            break;
+
+          // EXA1
+          case 0xa1:
+            break;
+        }
+        break;
+
+      // F--- instructions
+      case 0xf:
+        switch (opcode[1]) {
+          case 0x07:
+            break;
+
+          case 0x0a:
+            break;
+
+          case 0x15:
+            break;
+
+          case 0x18:
+            break;
+
+          case 0x1e:
+            break;
+
+          case 0x29:
+            break;
+
+          case 0x33:
+            break;
+
+          case 0x55:
+            break;
+
+          case 0x65:
+            break;
+        }
+        break;
+
+      default:
+        throw new Error(`invalid instruction: 0x${instruction.toString(16)}`);
+    }
+
+    // manually draw in step-thru mode
+    if (!this.isRunning) {
+      this.renderer.draw();
+      this.printRegisters();
+    }
   }
 
   /**
@@ -122,6 +297,8 @@ export default class Chip8 {
     for (let i = 0; i < buffer.length; i++) {
       this.memory[address + i] = buffer[i];
     }
+
+    this.registers["PC"] = this.options["programStartAddress"];
   }
 
   /**
@@ -134,5 +311,26 @@ export default class Chip8 {
     for (let i = 0; i < data.length; i++) {
       this.memory[address + i] = data[i];
     }
+  }
+
+  printRegisters() {
+    let prettyString = `PC: ${this.registers["PC"]} (0x${this.registers[
+      "PC"
+    ].toString(16)}) | I: ${this.registers["I"]} (0x${this.registers[
+      "I"
+    ].toString(16)})\n`;
+
+    for (let [key, value] of Object.entries(this.registers)) {
+      if (key == 4 || key == 8 || key == 12) {
+        prettyString += "\n";
+      }
+
+      if (key !== "PC" && key !== "I") {
+        prettyString += `V${key}: ${value} (0x${value.toString(16)}) | `;
+      }
+    }
+
+    prettyString = prettyString.slice(0, -2);
+    console.log(prettyString);
   }
 }
