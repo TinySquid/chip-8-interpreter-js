@@ -77,6 +77,7 @@ export default class Chip8 {
 
   stop() {
     this.isRunning = false;
+    this.isPausedByKeypad = false;
 
     this.renderer.stop();
 

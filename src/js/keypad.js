@@ -44,11 +44,6 @@ export default class Keypad {
 
     if (key !== undefined) {
       this.keyStates[key] = true;
-
-      if (this.blockingKeyPressHandler !== null) {
-        this.blockingKeyPressHandler(key);
-        this.blockingKeyPressHandler = null;
-      }
     }
   }
 
@@ -60,6 +55,11 @@ export default class Keypad {
 
     if (key !== undefined) {
       this.keyStates[key] = false;
+
+      if (this.blockingKeyPressHandler !== null) {
+        this.blockingKeyPressHandler(key);
+        this.blockingKeyPressHandler = null;
+      }
     }
   }
 }
