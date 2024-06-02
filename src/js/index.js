@@ -11,10 +11,9 @@ const options = {
   cyclesPerSecond: 700,
   chunkIntervalMs: 100,
   programStartAddress: 0x200,
+  defaultFontStartAddress: 0x050,
   memorySize: 4096,
 };
-
-const defaultFontLocation = 0x050;
 
 const renderer = new Renderer(64, 32, 10, "renderer");
 const keypad = new Keypad();
@@ -22,7 +21,7 @@ const speaker = new Speaker();
 
 const chip8 = new Chip8(renderer, keypad, speaker, options);
 
-chip8.loadFont(defaultFontLocation, fontData);
+chip8.loadFont(options.defaultFontStartAddress, fontData);
 
 const startBtn = document.getElementById("start-btn");
 startBtn.addEventListener("click", () => {

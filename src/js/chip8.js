@@ -125,6 +125,8 @@ export default class Chip8 {
   }
 
   step() {
+    if (this.isPausedByKeypad) return;
+
     /*
       memory is 1 byte wide so the instruction needs to
       combine two single byte reads.
@@ -388,10 +390,18 @@ export default class Chip8 {
         switch (opcode[1]) {
           // EX9E
           case 0x9e:
+            if (this.keypad.isKeyPressed(this.registers[vX])) {
+              this.registers["PC"] += 2;
+            }
+
             break;
 
           // EXA1
           case 0xa1:
+            if (!this.keypad.isKeyPressed(this.registers[vX])) {
+              this.registers["PC"] += 2;
+            }
+
             break;
         }
         break;
@@ -406,11 +416,6 @@ export default class Chip8 {
 
           // FX0A
           case 0x0a:
-            /* 
-              per ref the interpreter:
-                - is paused until any key is pressed
-                - that key is then stored into VX and the interpreter unpaused
-            */
             this.isPausedByKeypad = true;
 
             this.keypad.blockingKeyPressHandler = (key) => {
@@ -443,9 +448,8 @@ export default class Chip8 {
 
           // FX29
           case 0x29:
-            // set I register to address of font character in VX
-            // this will depend on where the font is stored
-            // and the size of each letter/digit in bytes
+            this.registers["I"] =
+              this.options.defaultFontStartAddress + this.registers[vX] * 5;
             break;
 
           // FX33
