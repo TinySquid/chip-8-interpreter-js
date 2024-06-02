@@ -104,7 +104,8 @@ export default class Chip8 {
   runChunk() {
     for (let i = 0; i < this.chunk.cyclesPerInterval; i++) {
       try {
-        this.step();
+        const artificialDrawDelay = this.step();
+        i += artificialDrawDelay;
       } catch (e) {
         console.error(e.message);
 
@@ -408,6 +409,8 @@ export default class Chip8 {
           this.registers[0xf] = 0;
         }
 
+        return 290;
+
         break;
 
       case 0xe:
@@ -517,6 +520,8 @@ export default class Chip8 {
       this.renderer.draw();
       this.printRegisters();
     }
+
+    return 0;
   }
 
   /**
