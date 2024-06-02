@@ -94,3 +94,7 @@ I will be remapping it for modern keyboards:
 |   `FX33`    |                               bcd `VX`                               |
 |   `FX55`    |           save `V0..VX` to memory starting at address `I`            |
 |   `FX65`    |         load from memory starting at address `I` to `V0..VX`         |
+
+## Credits
+
+Many thanks to the chip8 ROMs provided by [Timendus's Chip-8 Test Suite](https://github.com/Timendus/chip8-test-suite) repo

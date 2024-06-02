@@ -48,7 +48,8 @@ const loadBtn = document.getElementById("load-btn");
 loadBtn.addEventListener("click", async () => {
   chip8.reset();
 
-  const buffer = await readROM("ibm");
+  // const buffer = await readROM("/test/1-chip8-logo");
+  const buffer = await readROM("/test/3-corax+");
 
   chip8.loadROM(options.programStartAddress, buffer);
 });
