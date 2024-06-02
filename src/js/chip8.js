@@ -375,17 +375,15 @@ export default class Chip8 {
 
         let pixelDidFlip = false;
 
-        // this.registers[0xf] = 0;
-
         // sprite behavior will clip when past screen boundary vs wrapping
         for (let row = 0; row < iN; row++) {
           const spriteRowAddr = spriteMemoryAddress + row;
           const spriteRowData = this.memory[spriteRowAddr];
 
-          if (y > this.renderer.pixelHeight()) break;
+          if (y >= this.renderer.pixelHeight()) break;
 
           for (let col = 7; col >= 0; col--) {
-            if (x > this.renderer.pixelWidth()) break;
+            if (x >= this.renderer.pixelWidth()) break;
 
             const bitMask = 2 ** col;
 
@@ -404,7 +402,11 @@ export default class Chip8 {
           y++;
         }
 
-        // if (pixelDidFlip) this.registers[0xf] = 1;
+        if (pixelDidFlip) {
+          this.registers[0xf] = 1;
+        } else {
+          this.registers[0xf] = 0;
+        }
 
         break;
 
