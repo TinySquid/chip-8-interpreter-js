@@ -227,6 +227,8 @@ export default class Chip8 {
       // 7XNN
       case 0x7:
         this.registers[vX] += iNN;
+        this.registers[vX] &= 255;
+
         break;
 
       // 8--- instructions
@@ -261,9 +263,9 @@ export default class Chip8 {
 
               if (sum > 255) {
                 this.registers[0xf] = 1;
-
-                this.registers[vX] &= 255;
               }
+
+              this.registers[vX] &= 255;
             }
             break;
 
@@ -276,9 +278,9 @@ export default class Chip8 {
 
               if (this.registers[vX] < 0) {
                 this.registers[0xf] = 1;
-
-                this.registers[vX] &= 255;
               }
+
+              this.registers[vX] &= 255;
             }
             break;
 
@@ -296,11 +298,13 @@ export default class Chip8 {
           case 0x7:
             this.registers[0xf] = 0;
 
-            if (this.registers[vY] > this.registers[vX]) {
-              this.registers[0xf] = 1;
-            }
+            // if (this.registers[vY] > this.registers[vX]) {
+            //   this.registers[0xf] = 1;
+            // }
 
             this.registers[vX] = this.registers[vY] - this.registers[vX];
+
+            this.registers[vX] &= 255;
 
             break;
 
@@ -455,11 +459,13 @@ export default class Chip8 {
           // FX33
           // BCD
           case 0x33:
-            this.memory[this.registers["I"]] = this.registers[vX] / 100;
+            this.memory[this.registers["I"]] = Math.floor(this.registers[vX] / 100);
 
-            this.memory[this.registers["I"]] = (this.registers[vX] % 100) / 10;
+            this.memory[this.registers["I"] + 1] =
+            Math.floor((this.registers[vX] % 100) / 10);
 
-            this.memory[this.registers["I"]] = this.registers[vX] % 10;
+            this.memory[this.registers["I"] + 2] = this.registers[vX] % 10;
+
             break;
 
           // FX55
