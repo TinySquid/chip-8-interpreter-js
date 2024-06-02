@@ -49,7 +49,8 @@ loadBtn.addEventListener("click", async () => {
   chip8.reset();
 
   // const buffer = await readROM("/test/1-chip8-logo");
-  const buffer = await readROM("/test/3-corax+");
+  // const buffer = await readROM("/test/3-corax+");
+  const buffer = await readROM("/test/4-flags");
 
   chip8.loadROM(options.programStartAddress, buffer);
 });

@@ -257,12 +257,12 @@ export default class Chip8 {
           // 8XY4
           case 0x4:
             {
-              this.registers[0xf] = 0;
+              this.registers[vX] += this.registers[vY];
 
-              const sum = (this.registers[vX] += this.registers[vY]);
-
-              if (sum > 255) {
+              if (this.registers[vX] > 255) {
                 this.registers[0xf] = 1;
+              } else {
+                this.registers[0xf] = 0;
               }
 
               this.registers[vX] &= 255;
@@ -272,12 +272,12 @@ export default class Chip8 {
           // 8XY5
           case 0x5:
             {
-              this.registers[0xf] = 0;
+              // this.registers[0xf] = 0;
 
               const sum = (this.registers[vX] -= this.registers[vY]);
 
               if (this.registers[vX] < 0) {
-                this.registers[0xf] = 1;
+                // this.registers[0xf] = 1;
               }
 
               this.registers[vX] &= 255;
@@ -286,7 +286,7 @@ export default class Chip8 {
 
           // 8XY6
           case 0x6:
-            this.registers[0xf] = this.registers[vX] & 1; // 0000 0001
+            // this.registers[0xf] = this.registers[vX] & 1; // 0000 0001
 
             this.registers[vX] >>= 1;
 
@@ -296,7 +296,7 @@ export default class Chip8 {
 
           // 8XY7
           case 0x7:
-            this.registers[0xf] = 0;
+            // this.registers[0xf] = 0;
 
             // if (this.registers[vY] > this.registers[vX]) {
             //   this.registers[0xf] = 1;
@@ -310,7 +310,7 @@ export default class Chip8 {
 
           // 8XYE
           case 0xe:
-            this.registers[0xf] = this.registers[vX] & 0x80; // 1000 0000
+            // this.registers[0xf] = this.registers[vX] & 0x80; // 1000 0000
 
             this.registers[vX] <<= 1;
 
@@ -357,7 +357,7 @@ export default class Chip8 {
 
         let pixelDidFlip = false;
 
-        this.registers[0xf] = 0;
+        // this.registers[0xf] = 0;
 
         // sprite behavior will clip when past screen boundary vs wrapping
         for (let row = 0; row < iN; row++) {
@@ -386,7 +386,7 @@ export default class Chip8 {
           y++;
         }
 
-        if (pixelDidFlip) this.registers[0xf] = 1;
+        // if (pixelDidFlip) this.registers[0xf] = 1;
 
         break;
 
@@ -444,7 +444,7 @@ export default class Chip8 {
             this.registers["I"] += this.registers[vX];
 
             if (this.registers["I"] > 0x0fff) {
-              this.registers[0xf] = 1;
+              // this.registers[0xf] = 1;
             }
 
             this.registers["I"] &= 0x0fff;
