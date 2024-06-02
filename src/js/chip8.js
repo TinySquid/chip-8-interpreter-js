@@ -243,16 +243,19 @@ export default class Chip8 {
           // 8XY1
           case 0x1:
             this.registers[vX] |= this.registers[vY];
+            this.registers[0xf] = 0;
             break;
 
           // 8XY2
           case 0x2:
             this.registers[vX] &= this.registers[vY];
+            this.registers[0xf] = 0;
             break;
 
           // 8XY3
           case 0x3:
             this.registers[vX] ^= this.registers[vY];
+            this.registers[0xf] = 0;
             break;
 
           // 8XY4
@@ -346,7 +349,7 @@ export default class Chip8 {
 
       // BNNN
       case 0xb:
-        this.registers["PC"] = iNNN + this.registers[0x0];
+        this.registers["PC"] = iNNN + this.registers[vX];
         break;
 
       // CXNN
@@ -487,7 +490,8 @@ export default class Chip8 {
           // FX55
           case 0x55:
             for (let r = 0; r <= vX; r++) {
-              this.memory[this.registers["I"] + r] = this.registers[r];
+              this.memory[this.registers["I"]] = this.registers[r];
+              this.registers["I"]++;
             }
             break;
 
