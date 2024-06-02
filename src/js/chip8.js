@@ -286,9 +286,15 @@ export default class Chip8 {
 
           // 8XY6
           case 0x6:
-            // this.registers[0xf] = this.registers[vX] & 1; // 0000 0001
+            const lsb = this.registers[vX] & 1;
 
             this.registers[vX] >>= 1;
+
+            if (lsb) {
+              this.registers[0xf] = 1;
+            } else {
+              this.registers[0xf] = 0;
+            }
 
             this.registers[vX] &= 255;
 
@@ -296,13 +302,13 @@ export default class Chip8 {
 
           // 8XY7
           case 0x7:
-            // this.registers[0xf] = 0;
-
-            // if (this.registers[vY] > this.registers[vX]) {
-            //   this.registers[0xf] = 1;
-            // }
-
             this.registers[vX] = this.registers[vY] - this.registers[vX];
+
+            if (this.registers[vX] < 0) {
+              this.registers[0xf] = 0;
+            } else {
+              this.registers[0xf] = 1;
+            }
 
             this.registers[vX] &= 255;
 
@@ -310,9 +316,15 @@ export default class Chip8 {
 
           // 8XYE
           case 0xe:
-            // this.registers[0xf] = this.registers[vX] & 0x80; // 1000 0000
+            const msb = this.registers[vX] & 0x80;
 
             this.registers[vX] <<= 1;
+
+            if (msb) {
+              this.registers[0xf] = 1;
+            } else {
+              this.registers[0xf] = 0;
+            }
 
             this.registers[vX] &= 255;
 
