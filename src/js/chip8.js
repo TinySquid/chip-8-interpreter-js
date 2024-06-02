@@ -44,6 +44,7 @@ export default class Chip8 {
     };
 
     this.isRunning = false;
+    this.isPausedByKeypad = false;
 
     this.chunk = {
       handler: null,
@@ -228,6 +229,89 @@ export default class Chip8 {
 
       // 8--- instructions
       case 0x8:
+        switch (opcode[2]) {
+          // 8XY0
+          case 0x0:
+            this.registers[vX] = this.registers[vY];
+            break;
+
+          // 8XY1
+          case 0x1:
+            this.registers[vX] |= this.registers[vY];
+            break;
+
+          // 8XY2
+          case 0x2:
+            this.registers[vX] &= this.registers[vY];
+            break;
+
+          // 8XY3
+          case 0x3:
+            this.registers[vX] ^= this.registers[vY];
+            break;
+
+          // 8XY4
+          case 0x4:
+            {
+              this.registers[0xf] = 0;
+
+              const sum = (this.registers[vX] += this.registers[vY]);
+
+              if (sum > 255) {
+                this.registers[0xf] = 1;
+
+                this.registers[vX] &= 255;
+              }
+            }
+            break;
+
+          // 8XY5
+          case 0x5:
+            {
+              this.registers[0xf] = 0;
+
+              const sum = (this.registers[vX] -= this.registers[vY]);
+
+              if (this.registers[vX] < 0) {
+                this.registers[0xf] = 1;
+
+                this.registers[vX] &= 255;
+              }
+            }
+            break;
+
+          // 8XY6
+          case 0x6:
+            this.registers[0xf] = this.registers[vX] & 1; // 0000 0001
+
+            this.registers[vX] >>= 1;
+
+            this.registers[vX] &= 255;
+
+            break;
+
+          // 8XY7
+          case 0x7:
+            this.registers[0xf] = 0;
+
+            if (this.registers[vY] > this.registers[vX]) {
+              this.registers[0xf] = 1;
+            }
+
+            this.registers[vX] = this.registers[vY] - this.registers[vX];
+
+            break;
+
+          // 8XYE
+          case 0xe:
+            this.registers[0xf] = this.registers[vX] & 0x80; // 1000 0000
+
+            this.registers[vX] <<= 1;
+
+            this.registers[vX] &= 255;
+
+            break;
+        }
         break;
 
       // 9XY0
@@ -315,31 +399,77 @@ export default class Chip8 {
       // F--- instructions
       case 0xf:
         switch (opcode[1]) {
+          // FX07
           case 0x07:
+            this.registers[vX] = this.timer.delay;
             break;
 
+          // FX0A
           case 0x0a:
+            /* 
+              per ref the interpreter:
+                - is paused until any key is pressed
+                - that key is then stored into VX and the interpreter unpaused
+            */
+            this.isPausedByKeypad = true;
+
+            this.keypad.blockingKeyPressHandler = (key) => {
+              this.registers[vX] = key;
+              this.isPausedByKeypad = false;
+            };
+
             break;
 
+          // FX15
           case 0x15:
+            this.timer.delay = this.registers[vX];
             break;
 
+          // FX18
           case 0x18:
+            this.timer.sound = this.registers[vX];
             break;
 
+          // FX1E
           case 0x1e:
+            this.registers["I"] += this.registers[vX];
+
+            if (this.registers["I"] > 0x0fff) {
+              this.registers[0xf] = 1;
+            }
+
+            this.registers["I"] &= 0x0fff;
             break;
 
+          // FX29
           case 0x29:
+            // set I register to address of font character in VX
+            // this will depend on where the font is stored
+            // and the size of each letter/digit in bytes
             break;
 
+          // FX33
+          // BCD
           case 0x33:
+            this.memory[this.registers["I"]] = this.registers[vX] / 100;
+
+            this.memory[this.registers["I"]] = (this.registers[vX] % 100) / 10;
+
+            this.memory[this.registers["I"]] = this.registers[vX] % 10;
             break;
 
+          // FX55
           case 0x55:
+            for (let r = 0; r <= vX; r++) {
+              this.memory[this.registers["I"] + r] = this.registers[r];
+            }
             break;
 
+          // FX65
           case 0x65:
+            for (let r = 0; r <= vX; r++) {
+              this.registers[r] = this.memory[this.registers["I"] + r];
+            }
             break;
         }
         break;
