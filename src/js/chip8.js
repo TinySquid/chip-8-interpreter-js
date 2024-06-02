@@ -272,12 +272,12 @@ export default class Chip8 {
           // 8XY5
           case 0x5:
             {
-              // this.registers[0xf] = 0;
-
-              const sum = (this.registers[vX] -= this.registers[vY]);
+              this.registers[vX] -= this.registers[vY];
 
               if (this.registers[vX] < 0) {
-                // this.registers[0xf] = 1;
+                this.registers[0xf] = 0;
+              } else {
+                this.registers[0xf] = 1;
               }
 
               this.registers[vX] &= 255;
@@ -459,10 +459,13 @@ export default class Chip8 {
           // FX33
           // BCD
           case 0x33:
-            this.memory[this.registers["I"]] = Math.floor(this.registers[vX] / 100);
+            this.memory[this.registers["I"]] = Math.floor(
+              this.registers[vX] / 100
+            );
 
-            this.memory[this.registers["I"] + 1] =
-            Math.floor((this.registers[vX] % 100) / 10);
+            this.memory[this.registers["I"] + 1] = Math.floor(
+              (this.registers[vX] % 100) / 10
+            );
 
             this.memory[this.registers["I"] + 2] = this.registers[vX] % 10;
 
