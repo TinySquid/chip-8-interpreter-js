@@ -44,18 +44,43 @@ export default class Chip8 {
     };
 
     this.isRunning = false;
+
+    this.chunk = {
+      handler: null,
+      intervalMs: this.options["chunkIntervalMs"],
+      cyclesPerInterval:
+        this.options["cyclesPerSecond"] /
+        (1000 / this.options["chunkIntervalMs"]),
+    };
+
+    this.timer = {
+      delay: 0,
+      sound: 0,
+      handler: null,
+    };
   }
 
   start() {
     this.isRunning = true;
 
     this.renderer.start();
+
+    this.chunk.handler = setInterval(
+      this.runChunk.bind(this),
+      this.chunk.intervalMs
+    );
+
+    // 58hz close enough...?
+    this.timer.handler = setInterval(this.updateTimers.bind(this), 17);
   }
 
   stop() {
     this.isRunning = false;
 
     this.renderer.stop();
+
+    clearInterval(this.chunk.handler);
+    clearInterval(this.timer.handler);
   }
 
   reset() {
@@ -74,9 +99,31 @@ export default class Chip8 {
     this.renderer.clear();
   }
 
-  step() {
-    // this.printRegisters();
+  runChunk() {
+    for (let i = 0; i < this.chunk.cyclesPerInterval; i++) {
+      try {
+        this.step();
+      } catch (e) {
+        console.error(e.message);
 
+        this.stop();
+
+        break;
+      }
+    }
+  }
+
+  updateTimers() {
+    if (this.timer.delay > 0) {
+      this.timer.delay--;
+    }
+
+    if (this.timer.sound > 0) {
+      this.timer.sound--;
+    }
+  }
+
+  step() {
     /*
       memory is 1 byte wide so the instruction needs to
       combine two single byte reads.
@@ -86,15 +133,13 @@ export default class Chip8 {
       a2 Lsh 8 -> 1010 0010 0000 0000
       OR 2a ->    1010 0010 0010 1010
     */
+
     // FETCH
     const instruction =
       (this.memory[this.registers["PC"]] << 8) |
       this.memory[this.registers["PC"] + 1];
 
     this.registers["PC"] += 2;
-
-    // needs more thought because a 4095 rollover would set this to 96 instead of 0
-    // this.registers["PC"] &= 0x0fff;
 
     // DECODE
     /*
@@ -114,12 +159,6 @@ export default class Chip8 {
       instruction & 0x00ff,
       instruction & 0x000f,
     ];
-
-    // console.log(
-    //   instruction.toString(16),
-    //   opcode,
-    //   this.memory[this.registers["PC"] - 1].toString(16)
-    // );
 
     const vX = (instruction & 0x0f00) >> 8;
     const vY = (instruction & 0x00f0) >> 4;
