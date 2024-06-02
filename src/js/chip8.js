@@ -216,6 +216,49 @@ export default class Chip8 {
 
       // DXYN (drawing)
       case 0xd:
+        const spriteMemoryAddress = this.registers["I"];
+
+        // registers are 1 byte wide so 255 should map to display size
+        // ie 16 is the same as 240 % 32 (height) = 16
+        let xStart = this.registers[vX] % this.renderer.pixelWidth();
+        let yStart = this.registers[vY] % this.renderer.pixelHeight();
+
+        let x = xStart;
+        let y = yStart;
+
+        let pixelDidFlip = false;
+
+        this.registers[0xf] = 0;
+
+        // sprite behavior will clip when past screen boundary vs wrapping
+        for (let row = 0; row < iN; row++) {
+          const spriteRowAddr = spriteMemoryAddress + row;
+          const spriteRowData = this.memory[spriteRowAddr];
+
+          if (y > this.renderer.pixelHeight()) break;
+
+          for (let col = 7; col >= 0; col--) {
+            if (x > this.renderer.pixelWidth()) break;
+
+            const bitMask = 2 ** col;
+
+            const pixel = bitMask & spriteRowData;
+
+            if (pixel) {
+              const collision = this.renderer.togglePixel(x, y);
+
+              if (collision) pixelDidFlip = true;
+            }
+
+            x++;
+          }
+
+          x = xStart;
+          y++;
+        }
+
+        if (pixelDidFlip) this.registers[0xf] = 1;
+
         break;
 
       case 0xe:
