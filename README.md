@@ -36,7 +36,7 @@ Originally this was a 16 key hexidecimal keypad with the following layout:
 | :-: | :-: | :-: | :-: |
 |  1  |  2  |  3  |  C  |
 |  4  |  5  |  6  |  D  |
-|  7  |  9  |  9  |  E  |
+|  7  |  8  |  9  |  E  |
 |  A  |  0  |  B  |  F  |
 
 I will be remapping it for modern keyboards:
