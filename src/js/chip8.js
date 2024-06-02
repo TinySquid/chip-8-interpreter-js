@@ -292,6 +292,7 @@ export default class Chip8 {
           case 0x6:
             const lsb = this.registers[vX] & 1;
 
+            this.registers[vX] = this.registers[vY];
             this.registers[vX] >>= 1;
 
             if (lsb) {
@@ -321,7 +322,8 @@ export default class Chip8 {
           // 8XYE
           case 0xe:
             const msb = this.registers[vX] & 0x80;
-
+            
+            this.registers[vX] = this.registers[vY];
             this.registers[vX] <<= 1;
 
             if (msb) {
@@ -349,7 +351,7 @@ export default class Chip8 {
 
       // BNNN
       case 0xb:
-        this.registers["PC"] = iNNN + this.registers[vX];
+        this.registers["PC"] = iNNN + this.registers[0x0];
         break;
 
       // CXNN
