@@ -52,11 +52,6 @@ export default class Chip8 {
       cyclesPerInterval:
         this.options["cyclesPerSecond"] /
         (1000 / this.options["chunkIntervalMs"]),
-      // drawInstDelay:
-      //   this.options["cyclesPerSecond"] > 500
-      //     ? 0.018 * this.options["cyclesPerSecond"]
-      //     : 0,
-      // drawCounter: 0
     };
 
     this.timer = {
