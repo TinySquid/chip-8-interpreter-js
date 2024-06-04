@@ -98,3 +98,5 @@ I will be remapping it for modern keyboards:
 ## Credits
 
 Many thanks to the chip8 ROMs provided by [Timendus's Chip-8 Test Suite](https://github.com/Timendus/chip8-test-suite) repo
+
+[Laurence Scotford's](https://www.laurencescotford.net/2020/07/25/chip-8-on-the-cosmac-vip-index/) deep dive on the original behavior of the Chip-8 Interpreter
