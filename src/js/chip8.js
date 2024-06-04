@@ -475,10 +475,6 @@ export default class Chip8 {
           case 0x1e:
             this.registers["I"] += this.registers[vX];
 
-            if (this.registers["I"] > 0x0fff) {
-              // this.registers[0xf] = 1;
-            }
-
             this.registers["I"] &= 0x0fff;
             break;
 
