@@ -134,6 +134,14 @@ export default class Chip8 {
 
     if (this.timer.sound > 0) {
       this.timer.sound--;
+
+      if (!this.speaker.isEmitting) {
+        this.speaker.emit();
+      }
+    } else {
+      if (this.speaker.isEmitting) {
+        this.speaker.stop();
+      }
     }
   }
 

@@ -8,7 +8,7 @@ import { readROM } from "./utils";
 
 /** @type {Chip8InterpreterOptions} */
 const options = {
-  cyclesPerSecond: 3500,
+  cyclesPerSecond: 2000,
   chunkIntervalMs: 100,
   programStartAddress: 0x200,
   defaultFontStartAddress: 0x050,
@@ -51,8 +51,12 @@ loadBtn.addEventListener("click", async () => {
   // const buffer = await readROM("/test/1-chip8-logo");
   // const buffer = await readROM("/test/3-corax+");
   // const buffer = await readROM("/test/4-flags");
-  const buffer = await readROM("/test/5-quirks");
+  // const buffer = await readROM("/test/5-quirks");
   // const buffer = await readROM("/test/6-keypad");
+  const buffer = await readROM("/test/7-beep");
 
   chip8.loadROM(options.programStartAddress, buffer);
+
+  // audio in browser can only be started after a user event
+  speaker.init();
 });

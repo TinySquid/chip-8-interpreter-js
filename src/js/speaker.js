@@ -1,15 +1,16 @@
 class Speaker {
-  init() {
+  init(initialVolume = 0.01) {
     if (!this.audioCtx) {
       this.audioCtx = new window.AudioContext();
 
       this.gainNode = this.audioCtx.createGain();
       this.gainNode.connect(this.audioCtx.destination);
 
-      this.gainNode.gain.setValueAtTime(0.01, this.audioCtx.currentTime);
+      this.gainNode.gain.setValueAtTime(initialVolume, this.audioCtx.currentTime);
 
+      this.isEmitting = false;
       this.isMuted = false;
-      this.lastVol = 0.01;
+      this.lastVol = 0;
     }
   }
 
@@ -25,6 +26,8 @@ class Speaker {
       );
 
       this.oscillatorNode.start();
+
+      this.isEmitting = true;
     }
   }
 
@@ -40,6 +43,8 @@ class Speaker {
       this.oscillatorNode.stop();
       this.oscillatorNode.disconnect();
       this.oscillatorNode = null;
+
+      this.isEmitting = false;
     }
   }
 
