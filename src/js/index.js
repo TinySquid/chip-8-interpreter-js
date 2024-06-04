@@ -8,7 +8,7 @@ import { readROM } from "./utils";
 
 /** @type {Chip8InterpreterOptions} */
 const options = {
-  cyclesPerSecond: 15000,
+  cyclesPerSecond: 3500,
   chunkIntervalMs: 100,
   programStartAddress: 0x200,
   defaultFontStartAddress: 0x050,

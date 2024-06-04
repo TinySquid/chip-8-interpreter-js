@@ -52,6 +52,11 @@ export default class Chip8 {
       cyclesPerInterval:
         this.options["cyclesPerSecond"] /
         (1000 / this.options["chunkIntervalMs"]),
+      // drawInstDelay:
+      //   this.options["cyclesPerSecond"] > 500
+      //     ? 0.018 * this.options["cyclesPerSecond"]
+      //     : 0,
+      // drawCounter: 0
     };
 
     this.timer = {
@@ -102,10 +107,21 @@ export default class Chip8 {
   }
 
   runChunk() {
-    for (let i = 0; i < this.chunk.cyclesPerInterval; i++) {
+    for (let cycle = 0; cycle < this.chunk.cyclesPerInterval; cycle++) {
       try {
-        const artificialDrawDelay = this.step();
-        i += artificialDrawDelay;
+        if (this.step()) {
+          let cyclesForVBlank = 0;
+
+          if (this.chunk.cyclesPerInterval > 200) {
+            cyclesForVBlank = Math.floor(this.chunk.cyclesPerInterval / 5);
+          } else if (this.chunk.cyclesPerInterval > 100) {
+            cyclesForVBlank = Math.floor(this.chunk.cyclesPerInterval / 6);
+          } else if (this.chunk.cyclesPerInterval > 60) {
+            cyclesForVBlank = Math.floor(this.chunk.cyclesPerInterval / 10);
+          }
+
+          cycle += cyclesForVBlank;
+        }
       } catch (e) {
         console.error(e.message);
 
@@ -323,7 +339,7 @@ export default class Chip8 {
           // 8XYE
           case 0xe:
             const msb = this.registers[vX] & 0x80;
-            
+
             this.registers[vX] = this.registers[vY];
             this.registers[vX] <<= 1;
 
@@ -409,9 +425,7 @@ export default class Chip8 {
           this.registers[0xf] = 0;
         }
 
-        return 290;
-
-        break;
+        return true;
 
       case 0xe:
         switch (opcode[1]) {
@@ -521,7 +535,7 @@ export default class Chip8 {
       this.printRegisters();
     }
 
-    return 0;
+    return false;
   }
 
   /**
