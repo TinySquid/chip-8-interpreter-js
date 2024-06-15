@@ -191,6 +191,8 @@ export default class Chip8 {
     let iNN = instruction & 0x00ff;
     let iNNN = instruction & 0x0fff;
 
+    let didDrawThisCycle = false;
+
     // EXECUTE
     switch (opcode[0]) {
       case 0x0:
@@ -428,7 +430,8 @@ export default class Chip8 {
           this.registers[0xf] = 0;
         }
 
-        return true;
+        didDrawThisCycle = true;
+        break;
 
       case 0xe:
         switch (opcode[1]) {
@@ -534,7 +537,7 @@ export default class Chip8 {
       this.printRegisters();
     }
 
-    return false;
+    return didDrawThisCycle;
   }
 
   /**
