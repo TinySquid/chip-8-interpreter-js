@@ -1,74 +1,28 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CHIP-8 Interpreter in JS</title>
-    <link rel="icon" href="favicon.ico" />
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>CHIP-8 Interpreter in JS</title>
+		<link rel="icon" href="favicon.ico" />
 
-    <link rel="stylesheet" href="css/styles.css" />
+		<link rel="stylesheet" href="css/styles.css" />
 
-    <script type="module" src="js/index.js"></script>
-  </head>
+		<script type="module" src="js/index.js"></script>
+	</head>
 
-  <body class="bg-white dark:bg-stone-900 flex justify-center p-8">
-    <div class="flex flex-col">
-      <div class="px-2 pt-1">
-        <div class="flex flex-col divide-y-4 divide-stone-950">
-          <button
-            id="start-btn"
-            class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 bg-green-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none rounded-t-md"
-            type="button"
-          >
-            Start
-          </button>
-          <button
-            id="stop-btn"
-            class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 bg-red-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none rounded-l-none"
-            type="button"
-          >
-            Stop
-          </button>
-          <button
-            id="step-btn"
-            class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 bg-blue-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none rounded-l-none"
-            type="button"
-          >
-            Step
-          </button>
-          <button
-            id="reset-btn"
-            class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 bg-blue-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none rounded-b-md"
-            type="button"
-          >
-            Reset
-          </button>
-        </div>
-      </div>
-      <div class="min-h-[140px] px-2 flex items-end">
-        <div class="flex flex-col divide-y-4 divide-stone-950">
-          <button
-            id="load-btn"
-            class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 bg-blue-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none rounded-t-md"
-            type="button"
-          >
-            Load
-          </button>
-          <button
-            id="store-btn"
-            class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 bg-blue-800 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none rounded-b-md"
-            type="button"
-            disabled
-          >
-            Store
-          </button>
-        </div>
-      </div>
-    </div>
+	<body>
+		<div>
+			<button id="start-btn" type="button">Start</button>
+			<button id="stop-btn" type="button">Stop</button>
+			<button id="step-btn" type="button">Step</button>
+			<button id="reset-btn" type="button">Reset</button>
+		</div>
+		<div>
+			<button id="load-btn" type="button">Load</button>
+			<button id="store-btn" type="button" disabled>Store</button>
+		</div>
 
-    <canvas
-      id="renderer"
-      class="flex-none bg-[#3e452f]"
-    ></canvas>
-  </body>
+		<canvas id="renderer"></canvas>
+	</body>
 </html>
