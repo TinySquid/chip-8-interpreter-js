@@ -8,9 +8,9 @@ export const PIXEL_OFF_COLOR = "#3e452f";
  * @returns {Uint8Array}
  */
 export async function readROM(filename) {
-  const res = await fetch(`roms/${filename}.ch8`, { mode: "same-origin" });
-  const blob = await res.blob();
-  const buffer = await blob.arrayBuffer();
+	const res = await fetch(`roms/${filename}.ch8`, { mode: "same-origin" });
+	const blob = await res.blob();
+	const buffer = await blob.arrayBuffer();
 
-  return new Uint8Array(buffer);
+	return new Uint8Array(buffer);
 }

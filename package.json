@@ -24,10 +24,10 @@
 	"dependencies": {
 		"hexy": "^0.3.5"
 	},
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --write"
-    ]
-  }
+	"lint-staged": {
+		"*.js": [
+			"eslint --fix",
+			"prettier --write"
+		]
+	}
 }
